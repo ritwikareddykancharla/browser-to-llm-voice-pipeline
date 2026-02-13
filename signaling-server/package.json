@@ -1,0 +1,33 @@
+{
+  "name": "signaling-server",
+  "version": "1.0.0",
+  "description": "WebSocket signaling server for WebRTC voice pipeline",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "ws": "^8.14.2",
+    "uuid": "^9.0.1",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/ws": "^8.5.9",
+    "@types/uuid": "^9.0.6",
+    "typescript": "^5.2.2",
+    "tsx": "^4.1.4",
+    "eslint": "^8.53.0",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
