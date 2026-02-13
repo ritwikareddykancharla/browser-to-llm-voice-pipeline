@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/Dockerfile.frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      - signaling
+    environment:
+      - VITE_SIGNALING_URL=ws://localhost:${SIGNALING_PORT:-8080}
+    networks:
+      - voice-pipeline
+
+  signaling:
+    build:
+      context: ../signaling-server
+      dockerfile: ../docker/Dockerfile.signaling
+    ports:
+      - "${SIGNALING_PORT:-8080}:8080"
+    environment:
+      - SIGNALING_PORT=8080
+      - SIGNALING_HOST=0.0.0.0
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - MAX_CONNECTIONS=${MAX_CONNECTIONS:-1000}
+      - HEARTBEAT_INTERVAL=${HEARTBEAT_INTERVAL:-30000}
+      - CONNECTION_TIMEOUT=${CONNECTION_TIMEOUT:-60000}
+    networks:
+      - voice-pipeline
+
+  audio-service:
+    build:
+      context: ../audio-service
+      dockerfile: ../docker/Dockerfile.audio
+    ports:
+      - "${AUDIO_SERVICE_PORT:-8081}:8081"
+    depends_on:
+      - signaling
+    environment:
+      - AUDIO_SERVICE_PORT=8081
+      - SIGNALING_URL=ws://signaling:8080
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - VAD_THRESHOLD=${VAD_THRESHOLD:-0.5}
+    networks:
+      - voice-pipeline
+
+networks:
+  voice-pipeline:
+    driver: bridge
